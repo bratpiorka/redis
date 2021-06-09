@@ -160,8 +160,15 @@ int dictExpand(dict *d, unsigned long size)
     /* Allocate the new hash table and initialize all pointers to NULL */
     n.size = realsize;
     n.sizemask = realsize-1;
-    n.table = zcalloc(realsize*sizeof(dictEntry*));
+    //n.table = zcalloc(realsize*sizeof(dictEntry*));
+
+    void* ptr = zmalloc(1);
+    void* n_ptr = zrealloc(ptr, realsize*sizeof(dictEntry*));
+    memset(n_ptr, 0, realsize*sizeof(dictEntry*));
+    n.table = n_ptr;
+
     n.used = 0;
+
 
     /* Is this the first initialization? If so it's not really a rehashing
      * we just set the first hash table so that it can accept keys. */
