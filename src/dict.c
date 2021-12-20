@@ -116,7 +116,7 @@ static void _dictReset(dictht *ht)
 dict *dictCreate(dictType *type,
         void *privDataPtr)
 {
-    dict *d = zmalloc(sizeof(*d));
+    dict *d = zmalloc_dram(sizeof(*d));
 
     _dictInit(d,type,privDataPtr);
     return d;
@@ -312,7 +312,10 @@ dictEntry *dictAddRaw(dict *d, void *key, dictEntry **existing)
      * system it is more likely that recently added entries are accessed
      * more frequently. */
     ht = dictIsRehashing(d) ? &d->ht[1] : &d->ht[0];
+
+    // !!! dram to zmienia ratio na gorsze
     entry = zmalloc(sizeof(*entry));
+    
     entry->next = ht->table[index];
     ht->table[index] = entry;
     ht->used++;
